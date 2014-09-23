@@ -5,7 +5,7 @@ elasticsearch_owner: elasticsearch
 elasticsearch_group: elasticsearch
 
 # Version Info
-elasticsearch_openjdk_version: java-1.7.0-openjdk # Redhat
+elasticsearch_openjdk_package_name: java-1.7.0-openjdk # Redhat
 elasticsearch_version: 1.2
 
 # Configuration files
