@@ -1,0 +1,430 @@
+##################### Elasticsearch Configuration Example #####################
+# {{ ansible_managed }}
+#
+# This file contains an overview of various configuration settings,
+# targeted at operations staff. Application developers should
+# consult the guide at <http://elasticsearch.org/guide>.
+#
+# The installation procedure is covered at
+# <http://elasticsearch.org/guide/en/elasticsearch/reference/current/setup.html>.
+#
+# Elasticsearch comes with reasonable defaults for most settings,
+# so you can try it out without bothering with configuration.
+#
+# Most of the time, these defaults are just fine for running a production
+# cluster. If you're fine-tuning your cluster, or wondering about the
+# effect of certain configuration option, please _do ask_ on the
+# mailing list or IRC channel [http://elasticsearch.org/community].
+
+# Any element in the configuration can be replaced with environment variables
+# by placing them in ${...} notation. For example:
+#
+#node.rack: ${RACK_ENV_VAR}
+
+# For information on supported formats and syntax for the config file, see
+# <http://elasticsearch.org/guide/en/elasticsearch/reference/current/setup-configuration.html>
+
+
+################################### Cluster ###################################
+
+# Cluster name identifies your cluster for auto-discovery. If you're running
+# multiple clusters on the same network, make sure you're using unique names.
+#
+{% if not elasticsearch_esconf_cluster_name %}#{% endif -%}
+cluster.name: {{ elasticsearch_esconf_cluster_name }}
+
+
+#################################### Node #####################################
+
+# Node names are generated dynamically on startup, so you're relieved
+# from configuring them manually. You can tie this node to a specific name:
+#
+{% if not elasticsearch_esconf_node_name %}#{% endif -%}
+node.name: {{ elasticsearch_esconf_node_name }}
+
+# Every node can be configured to allow or deny being eligible as the master,
+# and to allow or deny to store the data.
+#
+# Allow this node to be eligible as a master node (enabled by default):
+#
+{% if not elasticsearch_esconf_node_master %}#{% endif -%}
+node.master: {{ elasticsearch_esconf_node_master }}
+#
+# Allow this node to store data (enabled by default):
+#
+{% if not elasticsearch_esconf_node_data %}#{% endif -%}
+node.data: {{ elasticsearch_esconf_node_data }}
+
+# You can exploit these settings to design advanced cluster topologies.
+#
+# 1. You want this node to never become a master node, only to hold data.
+#    This will be the "workhorse" of your cluster.
+#
+#node.master: false
+#node.data: true
+#
+# 2. You want this node to only serve as a master: to not store any data and
+#    to have free resources. This will be the "coordinator" of your cluster.
+#
+#node.master: true
+#node.data: false
+#
+# 3. You want this node to be neither master nor data node, but
+#    to act as a "search load balancer" (fetching data from nodes,
+#    aggregating results, etc.)
+#
+#node.master: false
+#node.data: false
+
+# Use the Cluster Health API [http://localhost:9200/_cluster/health], the
+# Node Info API [http://localhost:9200/_nodes] or GUI tools
+# such as <http://www.elasticsearch.org/overview/marvel/>,
+# <http://github.com/karmi/elasticsearch-paramedic>,
+# <http://github.com/lukas-vlcek/bigdesk> and
+# <http://mobz.github.com/elasticsearch-head> to inspect the cluster state.
+
+# A node can have generic attributes associated with it, which can later be used
+# for customized shard allocation filtering, or allocation awareness. An attribute
+# is a simple key value pair, similar to node.key: value, here is an example:
+#
+{% if not elasticsearch_esconf_node_rack %}#{% endif -%}
+node.rack: {{ elasticsearch_esconf_node_rack }}
+
+# By default, multiple nodes are allowed to start from the same installation location
+# to disable it, set the following:
+{% if not elasticsearch_esconf_node_max_local_storage_nodes %}#{% endif -%}
+node.max_local_storage_nodes: {{ elasticsearch_esconf_node_max_local_storage_nodes }}
+
+
+#################################### Index ####################################
+
+# You can set a number of options (such as shard/replica options, mapping
+# or analyzer definitions, translog settings, ...) for indices globally,
+# in this file.
+#
+# Note, that it makes more sense to configure index settings specifically for
+# a certain index, either when creating it or by using the index templates API.
+#
+# See <http://elasticsearch.org/guide/en/elasticsearch/reference/current/index-modules.html> and
+# <http://elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html>
+# for more information.
+
+# Set the number of shards (splits) of an index (5 by default):
+#
+{% if not elasticsearch_esconf_index_number_of_shards %}#{% endif -%}
+index.number_of_shards: {{ elasticsearch_esconf_index_number_of_shards }}
+
+# Set the number of replicas (additional copies) of an index (1 by default):
+#
+{% if not elasticsearch_esconf_index_number_of_replicas %}#{% endif -%}
+index.number_of_replicas: {{ elasticsearch_esconf_index_number_of_replicas }}
+
+# Note, that for development on a local machine, with small indices, it usually
+# makes sense to "disable" the distributed features:
+#
+#index.number_of_shards: 1
+#index.number_of_replicas: 0
+
+# These settings directly affect the performance of index and search operations
+# in your cluster. Assuming you have enough machines to hold shards and
+# replicas, the rule of thumb is:
+#
+# 1. Having more *shards* enhances the _indexing_ performance and allows to
+#    _distribute_ a big index across machines.
+# 2. Having more *replicas* enhances the _search_ performance and improves the
+#    cluster _availability_.
+#
+# The "number_of_shards" is a one-time setting for an index.
+#
+# The "number_of_replicas" can be increased or decreased anytime,
+# by using the Index Update Settings API.
+#
+# Elasticsearch takes care about load balancing, relocating, gathering the
+# results from nodes, etc. Experiment with different settings to fine-tune
+# your setup.
+
+# Use the Index Status API (<http://localhost:9200/A/_status>) to inspect
+# the index status.
+
+
+#################################### Paths ####################################
+
+# Path to directory containing configuration (this file and logging.yml):
+#
+{% if not elasticsearch_esconf_path_conf %}#{% endif -%}
+path.conf: {{ elasticsearch_esconf_path_conf }}
+
+# Path to directory where to store index data allocated for this node.
+#
+{% if not elasticsearch_esconf_path_data %}#{% endif -%}
+path.data: {{ elasticsearch_esconf_path_data }}
+#
+# Can optionally include more than one location, causing data to be striped across
+# the locations (a la RAID 0) on a file level, favouring locations with most free
+# space on creation. For example:
+#
+#path.data: /path/to/data1,/path/to/data2
+
+# Path to temporary files:
+#
+{% if not elasticsearch_esconf_path_work %}#{% endif -%}
+path.work: {{ elasticsearch_esconf_path_work }}
+
+# Path to log files:
+#
+{% if not elasticsearch_esconf_path_logs %}#{% endif -%}
+path.logs: {{ elasticsearch_esconf_path_logs }}
+
+# Path to where plugins are installed:
+#
+{% if not elasticsearch_esconf_path_plugins %}#{% endif -%}
+path.plugins: {{ elasticsearch_esconf_path_plugins }}
+
+
+#################################### Plugin ###################################
+
+# If a plugin listed here is not installed for current node, the node will not start.
+#
+{% if not elasticsearch_esconf_plugin_mandatory %}#{% endif -%}
+plugin.mandatory: {{ elasticsearch_esconf_plugin_mandatory }}
+
+
+################################### Memory ####################################
+
+# Elasticsearch performs poorly when JVM starts swapping: you should ensure that
+# it _never_ swaps.
+#
+# Set this property to true to lock the memory:
+#
+{% if not elasticsearch_esconf_bootstrap_mlockall %}#{% endif -%}
+bootstrap.mlockall: {{ elasticsearch_esconf_bootstrap_mlockall }}
+
+# Make sure that the ES_MIN_MEM and ES_MAX_MEM environment variables are set
+# to the same value, and that the machine has enough memory to allocate
+# for Elasticsearch, leaving enough memory for the operating system itself.
+#
+# You should also make sure that the Elasticsearch process is allowed to lock
+# the memory, eg. by using `ulimit -l unlimited`.
+
+
+############################## Network And HTTP ###############################
+
+# Elasticsearch, by default, binds itself to the 0.0.0.0 address, and listens
+# on port [9200-9300] for HTTP traffic and on port [9300-9400] for node-to-node
+# communication. (the range means that if the port is busy, it will automatically
+# try the next port).
+
+# Set the bind address specifically (IPv4 or IPv6):
+#
+{% if not elasticsearch_esconf_network_bind_host %}#{% endif -%}
+network.bind_host: {{ elasticsearch_esconf_network_bind_host }}
+
+# Set the address other nodes will use to communicate with this node. If not
+# set, it is automatically derived. It must point to an actual IP address.
+#
+{% if not elasticsearch_esconf_network_publish_host %}#{% endif -%}
+network.publish_host: {{ elasticsearch_esconf_network_publish_host }}
+
+# Set both 'bind_host' and 'publish_host':
+#
+{% if not elasticsearch_esconf_network_host %}#{% endif -%}
+network.host: {{ elasticsearch_esconf_network_host }}
+
+# Set a custom port for the node to node communication (9300 by default):
+#
+{% if not elasticsearch_esconf_transport_tcp_port %}#{% endif -%}
+transport.tcp.port: {{ elasticsearch_esconf_transport_tcp_port }}
+
+# Enable compression for all communication between nodes (disabled by default):
+#
+{% if not elasticsearch_esconf_transport_tcp_compress %}#{% endif -%}
+transport.tcp.compress: {{ elasticsearch_esconf_transport_tcp_compress }}
+
+# Set a custom port to listen for HTTP traffic:
+#
+{% if not elasticsearch_esconf_http_port %}#{% endif -%}
+http.port: {{ elasticsearch_esconf_http_port }}
+
+# Set a custom allowed content length:
+#
+{% if not elasticsearch_esconf_http_max_content_length %}#{% endif -%}
+http.max_content_length: {{ elasticsearch_esconf_http_max_content_length }}
+
+# Disable HTTP completely:
+#
+{% if not elasticsearch_esconf_http_enabled %}#{% endif -%}
+http.enabled: {{ elasticsearch_esconf_http_enabled }}
+
+
+################################### Gateway ###################################
+
+# The gateway allows for persisting the cluster state between full cluster
+# restarts. Every change to the state (such as adding an index) will be stored
+# in the gateway, and when the cluster starts up for the first time,
+# it will read its state from the gateway.
+
+# There are several types of gateway implementations. For more information, see
+# <http://elasticsearch.org/guide/en/elasticsearch/reference/current/modules-gateway.html>.
+
+# The default gateway type is the "local" gateway (recommended):
+#
+{% if not elasticsearch_esconf_gateway_type %}#{% endif -%}
+gateway.type: {{ elasticsearch_esconf_gateway_type }}
+
+# Settings below control how and when to start the initial recovery process on
+# a full cluster restart (to reuse as much local data as possible when using shared
+# gateway).
+
+# Allow recovery process after N nodes in a cluster are up:
+#
+{% if not elasticsearch_esconf_gateway_recover_after_nodes %}#{% endif -%}
+gateway.recover_after_nodes: {{ elasticsearch_esconf_gateway_recover_after_nodes }}
+
+# Set the timeout to initiate the recovery process, once the N nodes
+# from previous setting are up (accepts time value):
+#
+{% if not elasticsearch_esconf_gateway_recover_after_time %}#{% endif -%}
+gateway.recover_after_time: {{ elasticsearch_esconf_gateway_recover_after_time }}
+
+# Set how many nodes are expected in this cluster. Once these N nodes
+# are up (and recover_after_nodes is met), begin recovery process immediately
+# (without waiting for recover_after_time to expire):
+#
+{% if not elasticsearch_esconf_gateway_expected_nodes %}#{% endif -%}
+gateway.expected_nodes: {{ elasticsearch_esconf_gateway_expected_nodes }}
+
+
+############################# Recovery Throttling #############################
+
+# These settings allow to control the process of shards allocation between
+# nodes during initial recovery, replica allocation, rebalancing,
+# or when adding and removing nodes.
+
+# Set the number of concurrent recoveries happening on a node:
+#
+# 1. During the initial recovery
+#
+{% if not elasticsearch_esconf_cluster_routing_allocation_node_initial_primaries_recoveries %}#{% endif -%}
+cluster.routing.allocation.node_initial_primaries_recoveries: {{ elasticsearch_esconf_cluster_routing_allocation_node_initial_primaries_recoveries }}
+#
+# 2. During adding/removing nodes, rebalancing, etc
+#
+{% if not elasticsearch_esconf_cluster_routing_allocation_node_concurrent_recoveries %}#{% endif -%}
+cluster.routing.allocation.node_concurrent_recoveries: {{ elasticsearch_esconf_cluster_routing_allocation_node_concurrent_recoveries }}
+
+# Set to throttle throughput when recovering (eg. 100mb, by default 20mb):
+#
+{% if not elasticsearch_esconf_indices_recovery_max_bytes_per_sec %}#{% endif -%}
+indices.recovery.max_bytes_per_sec: {{ elasticsearch_esconf_indices_recovery_max_bytes_per_sec }}
+
+# Set to limit the number of open concurrent streams when
+# recovering a shard from a peer:
+#
+{% if not elasticsearch_esconf_indices_recovery_concurrent_streams %}#{% endif -%}
+indices.recovery.concurrent_streams: {{ elasticsearch_esconf_indices_recovery_concurrent_streams }}
+
+
+################################## Discovery ##################################
+
+# Discovery infrastructure ensures nodes can be found within a cluster
+# and master node is elected. Multicast discovery is the default.
+
+# Set to ensure a node sees N other master eligible nodes to be considered
+# operational within the cluster. Its recommended to set it to a higher value
+# than 1 when running more than 2 nodes in the cluster.
+#
+{% if not elasticsearch_esconf_discovery_zen_minimum_master_nodes %}#{% endif -%}
+discovery.zen.minimum_master_nodes: {{ elasticsearch_esconf_discovery_zen_minimum_master_nodes }}
+
+# Set the time to wait for ping responses from other nodes when discovering.
+# Set this option to a higher value on a slow or congested network
+# to minimize discovery failures:
+#
+{% if not elasticsearch_esconf_discovery_zen_ping_timeout %}#{% endif -%}
+discovery.zen.ping.timeout: {{ elasticsearch_esconf_discovery_zen_ping_timeout }}
+
+# For more information, see
+# <http://elasticsearch.org/guide/en/elasticsearch/reference/current/modules-discovery-zen.html>
+
+# Unicast discovery allows to explicitly control which nodes will be used
+# to discover the cluster. It can be used when multicast is not present,
+# or to restrict the cluster communication-wise.
+#
+# 1. Disable multicast discovery (enabled by default):
+#
+#discovery.zen.ping.multicast.enabled: false
+#
+# 2. Configure an initial list of master nodes in the cluster
+#    to perform discovery when new nodes (master or data) are started:
+#
+{% if not elasticsearch_esconf_discovery_zen_ping_unicast_hosts %}#{% endif -%}
+discovery.zen.ping.unicast.hosts: {{ elasticsearch_esconf_discovery_zen_ping_unicast_hosts }}
+
+# EC2 discovery allows to use AWS EC2 API in order to perform discovery.
+#
+# You have to install the cloud-aws plugin for enabling the EC2 discovery.
+#
+# For more information, see
+# <http://elasticsearch.org/guide/en/elasticsearch/reference/current/modules-discovery-ec2.html>
+#
+# See <http://elasticsearch.org/tutorials/elasticsearch-on-ec2/>
+# for a step-by-step tutorial.
+
+# GCE discovery allows to use Google Compute Engine API in order to perform discovery.
+#
+# You have to install the cloud-gce plugin for enabling the GCE discovery.
+#
+# For more information, see <https://github.com/elasticsearch/elasticsearch-cloud-gce>.
+
+# Azure discovery allows to use Azure API in order to perform discovery.
+#
+# You have to install the cloud-azure plugin for enabling the Azure discovery.
+#
+# For more information, see <https://github.com/elasticsearch/elasticsearch-cloud-azure>.
+
+################################## Slow Log ##################################
+
+# Shard level query and fetch threshold logging.
+
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_query_warn %}#{% endif -%}
+index.search.slowlog.threshold.query.warn: {{ elasticsearch_esconf_index_search_slowlog_threshold_query_warn }}
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_query_info %}#{% endif -%}
+index.search.slowlog.threshold.query.info: {{ elasticsearch_esconf_index_search_slowlog_threshold_query_info }}
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_query_debug %}#{% endif -%}
+index.search.slowlog.threshold.query.debug: {{ elasticsearch_esconf_index_search_slowlog_threshold_query_debug }}
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_query_trace %}#{% endif -%}
+index.search.slowlog.threshold.query.trace: {{ elasticsearch_esconf_index_search_slowlog_threshold_query_trace }}
+
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_fetch_warn %}#{% endif -%}
+index.search.slowlog.threshold.fetch.warn: {{ elasticsearch_esconf_index_search_slowlog_threshold_fetch_warn }}
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_fetch_info %}#{% endif -%}
+index.search.slowlog.threshold.fetch.info: {{ elasticsearch_esconf_index_search_slowlog_threshold_fetch_info }}
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_fetch_debug %}#{% endif -%}
+index.search.slowlog.threshold.fetch.debug: {{ elasticsearch_esconf_index_search_slowlog_threshold_fetch_debug }}
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_fetch_trace %}#{% endif -%}
+index.search.slowlog.threshold.fetch.trace: {{ elasticsearch_esconf_index_search_slowlog_threshold_fetch_trace }}
+
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_index_warn %}#{% endif -%}
+index.indexing.slowlog.threshold.index.warn: {{ elasticsearch_esconf_index_search_slowlog_threshold_index_warn }}
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_index_info %}#{% endif -%}
+index.indexing.slowlog.threshold.index.info: {{ elasticsearch_esconf_index_search_slowlog_threshold_index_info }}
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_index_debug %}#{% endif -%}
+index.indexing.slowlog.threshold.index.debug: {{ elasticsearch_esconf_index_search_slowlog_threshold_index_debug }}
+{% if not elasticsearch_esconf_index_search_slowlog_threshold_index_trace %}#{% endif -%}
+index.indexing.slowlog.threshold.index.trace: {{ elasticsearch_esconf_index_search_slowlog_threshold_index_trace }}
+
+################################## GC Logging ################################
+
+{% if not elasticsearch_esconf_monitor_jvm_gc_young_warn %}#{% endif -%}
+monitor.jvm.gc.young.warn: {{ elasticsearch_esconf_monitor_jvm_gc_young_warn }}
+{% if not elasticsearch_esconf_monitor_jvm_gc_young_info %}#{% endif -%}
+monitor.jvm.gc.young.info: {{ elasticsearch_esconf_monitor_jvm_gc_young_info }}
+{% if not elasticsearch_esconf_monitor_jvm_gc_young_debug %}#{% endif -%}
+monitor.jvm.gc.young.debug: {{ elasticsearch_esconf_monitor_jvm_gc_young_debug }}
+
+{% if not elasticsearch_esconf_monitor_jvm_gc_old_warn %}#{% endif -%}
+monitor.jvm.gc.old.warn: {{ elasticsearch_esconf_monitor_jvm_gc_old_warn }}
+{% if not elasticsearch_esconf_monitor_jvm_gc_old_info %}#{% endif -%}
+monitor.jvm.gc.old.info: {{ elasticsearch_esconf_monitor_jvm_gc_old_info }}
+{% if not elasticsearch_esconf_monitor_jvm_gc_old_debug %}#{% endif -%}
+monitor.jvm.gc.old.debug: {{ elasticsearch_esconf_monitor_jvm_gc_old_debug }}

@@ -1,0 +1,98 @@
+---
+
+# Ownership of files & data
+elasticsearch_owner: elasticsearch
+elasticsearch_group: elasticsearch
+
+# Version Info
+elasticsearch_openjdk_version: 1.7.0
+elasticsearch_version: 1.2
+
+# Configuration files
+elasticsearch_conf_elasticsearch_file:  /etc/elasticsearch/elasticsearch.yml
+elasticsearch_conf_logging_file:        /etc/elasticsearch/logging.yml
+
+
+###############################################################################
+############################## elasticsearch.yml ##############################
+###############################################################################
+
+
+################################### Cluster ###################################
+elasticsearch_esconf_cluster_name:  ~    # elasticsearch
+
+#################################### Node #####################################
+elasticsearch_esconf_node_name:                     ~   # esearch01
+elasticsearch_esconf_node_master:                   ~   # true
+elasticsearch_esconf_node_data:                     ~   # true
+elasticsearch_esconf_node_rack:                     ~   # rack314
+elasticsearch_esconf_node_max_local_storage_nodes:  ~   # 1
+
+#################################### Index ####################################
+elasticsearch_esconf_index_number_of_shards:        ~   # 5
+elasticsearch_esconf_index_number_of_replicas:      ~   # 1
+
+#################################### Paths ####################################
+elasticsearch_esconf_path_conf:     ~   # /path/to/conf
+elasticsearch_esconf_path_data:     ~   /usr/share/elasticsearch/data   # /path/to/data1,/path/to/data2
+elasticsearch_esconf_path_work:     ~   # /path/to/work
+elasticsearch_esconf_path_logs:     ~   # /path/to/logs
+elasticsearch_esconf_path_plugins:  ~   # /path/to/plugins
+
+#################################### Plugin ###################################
+elasticsearch_esconf_plugin_mandatory:        ~   # mapper-attachments,lang-groovy
+
+################################### Memory ####################################
+elasticsearch_esconf_bootstrap_mlockall:      ~   # true
+
+############################## Network And HTTP ###############################
+elasticsearch_esconf_network_bind_host:       ~   # 192.168.0.1
+elasticsearch_esconf_network_publish_host:    ~   # 192.168.0.1
+elasticsearch_esconf_network_host:            ~   # 192.168.0.1
+elasticsearch_esconf_transport_tcp_port:      ~   # 9300
+elasticsearch_esconf_transport_tcp_compress:  ~   # true
+elasticsearch_esconf_http_port:               ~   # 9200
+elasticsearch_esconf_http_max_content_length: ~   # 100mb
+elasticsearch_esconf_http_enabled:            ~   # false
+
+################################### Gateway ###################################
+elasticsearch_esconf_gateway_type:                ~   # local
+elasticsearch_esconf_gateway_recover_after_nodes: ~   # 1
+elasticsearch_esconf_gateway_recover_after_time:  ~   # 5m
+elasticsearch_esconf_gateway_expected_nodes:      ~   # 2
+
+############################# Recovery Throttling #############################
+elasticsearch_esconf_cluster_routing_allocation_node_initial_primaries_recoveries: ~    # 4
+elasticsearch_esconf_cluster_routing_allocation_node_concurrent_recoveries: ~   # 2
+elasticsearch_esconf_indices_recovery_max_bytes_per_sec:  ~   # 20mb
+elasticsearch_esconf_indices_recovery_concurrent_streams: ~   # 5
+
+################################## Discovery ##################################
+elasticsearch_esconf_discovery_zen_minimum_master_nodes:  ~   # 1
+elasticsearch_esconf_discovery_zen_ping_timeout:          ~   # 3s
+elasticsearch_esconf_discovery_zen_ping_unicast_hosts:    ~   # host1
+
+################################## Slow Log ##################################
+elasticsearch_esconf_index_search_slowlog_threshold_query_warn:   ~   # 10s
+elasticsearch_esconf_index_search_slowlog_threshold_query_info:   ~   # 5s
+elasticsearch_esconf_index_search_slowlog_threshold_query_debug:  ~   # 2s
+elasticsearch_esconf_index_search_slowlog_threshold_query_trace:  ~   # 500ms
+
+elasticsearch_esconf_index_search_slowlog_threshold_fetch_warn:   ~   # 1s
+elasticsearch_esconf_index_search_slowlog_threshold_fetch_info:   ~   # 800ms
+elasticsearch_esconf_index_search_slowlog_threshold_fetch_debug:  ~   # 500ms
+elasticsearch_esconf_index_search_slowlog_threshold_fetch_trace:  ~   # 200ms
+
+elasticsearch_esconf_index_search_slowlog_threshold_index_warn:   ~   # 10s
+elasticsearch_esconf_index_search_slowlog_threshold_index_info:   ~   # 5s
+elasticsearch_esconf_index_search_slowlog_threshold_index_debug:  ~   # 2s
+elasticsearch_esconf_index_search_slowlog_threshold_index_trace:  ~   # 500ms
+
+################################## GC Logging ################################
+elasticsearch_esconf_monitor_jvm_gc_young_warn:   ~   # 1000ms
+elasticsearch_esconf_monitor_jvm_gc_young_info:   ~   # 700ms
+elasticsearch_esconf_monitor_jvm_gc_young_debug:  ~   # 400ms
+
+elasticsearch_esconf_monitor_jvm_gc_old_warn:     ~   # 10s
+elasticsearch_esconf_monitor_jvm_gc_old_info:     ~   # 5s
+elasticsearch_esconf_monitor_jvm_gc_old_debug:    ~   # 2s

@@ -1,0 +1,20 @@
+---
+- name: yum add elasticsearch key
+  sudo: true
+  rpm_key:
+    key: "http://packages.elasticsearch.org/GPG-KEY-elasticsearch"
+    state: present
+  tags:
+    - elasticsearch
+    - yum
+    - install
+
+- name: yum add elasticsearch repository
+  sudo: true
+  template:
+    src: etc_yum.repos.d_elasticsearch.repo
+    dest: /etc/yum.repos.d/elasticsearch.repo
+  tags:
+    - elasticsearch
+    - yum
+    - install

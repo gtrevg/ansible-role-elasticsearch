@@ -1,0 +1,106 @@
+- name:  install java openjdk
+  sudo: true
+  action: >
+    {{ ansible_pkg_mgr }}
+    name=java-{{ elasticsearch_openjdk_version }}-openjdk
+    state=present
+
+- name: create the elasticsearch group
+  sudo: true
+  group:
+    name: "{{ elasticsearch_group }}"
+    state: present
+    system: yes
+
+- name: make sure the elasticsearch user is created
+  sudo: true
+  action: >
+    user
+    name={{ elasticsearch_owner }}
+    group={{ elasticsearch_group }}
+    state=present
+
+- name: create config directories
+  sudo: true
+  file:
+    dest: "{{ item }}"
+    state: directory
+    group: "{{ elasticsearch_group }}"
+    mode: 0755
+  with_flattened:
+    - "{{
+        [
+          elasticsearch_conf_elasticsearch_file | dirname,
+          elasticsearch_conf_elasticsearch_file | dirname
+        ] | unique
+      }}"
+    # - "{{ elasticsearch_conf_elasticsearch_file }}"
+    # - "{{ elasticsearch_conf_logging_file }}"
+
+- name: create data directories
+  sudo: true
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: "{{ elasticsearch_owner }}"
+    group: "{{ elasticsearch_group }}"
+    mode: 0700
+
+  with_items: elasticsearch_esconf_path_data.split(',')
+  when: elasticsearch_esconf_path_data != None
+
+- name: create work & logs directories
+  sudo: true
+  file:
+    dest: "{{ item }}"
+    state: directory
+    group: "{{ elasticsearch_group }}"
+    mode: 0755
+
+  with_flattened:
+    - "{{[
+        elasticsearch_esconf_path_work,
+        elasticsearch_esconf_path_logs
+        ] | difference([None]) }}"
+
+- name: include yum tasks
+  include: yum.yaml
+  when: ansible_pkg_mgr == "yum"
+
+- name: include apt tasks
+  include: apt.yaml
+  when: ansible_pkg_mgr == "apt"
+
+- name:
+  sudo: true
+  action:  "{{ ansible_pkg_mgr }} name=elasticsearch state=present"
+
+
+- name: remove elasticsearch config files
+  sudo: true
+  file:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ elasticsearch_conf_elasticsearch_file }}"
+    - "{{ elasticsearch_conf_logging_file }}"
+
+
+- name: set up elastic search elasticsearch.yml file
+  sudo: true
+  template:
+    src: etc_elasticsearch_elasticsearch.yml
+    dest: "{{ elasticsearch_conf_elasticsearch_file }}"
+    backup: yes
+    owner: "{{ elasticsearch_owner }}"
+    group: "{{ elasticsearch_group }}"
+    mode: 0644
+
+- name: set up elastic search logging.yml file
+  sudo: true
+  template:
+    src: etc_elasticsearch_logging.yml
+    dest: "{{ elasticsearch_conf_logging_file }}"
+    owner: "{{ elasticsearch_owner }}"
+    group: "{{ elasticsearch_group }}"
+    mode: 0644

@@ -1,4 +1,4 @@
 ansible-role-elasticsearch
 ==========================
 
-A simple ansible role for installing elastic search
+[EXPERIMENTAL] A simple ansible role for installing elastic search.
