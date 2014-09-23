@@ -1,8 +1,11 @@
+- name: include os configs
+  include_vars: "{{ ansible_os_family }}.yaml"
+
 - name:  install java openjdk
   sudo: true
   action: >
     {{ ansible_pkg_mgr }}
-    name=java-{{ elasticsearch_openjdk_version }}-openjdk
+    name={{ elasticsearch_openjdk_package_name }}
     state=present
 
 - name: create the elasticsearch group
