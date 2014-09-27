@@ -46,7 +46,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node.vm.box_url = machine["vm"]["box_url"]
       node.vm.network :private_network, type: "dhcp"
 
-      node.vm.network "forwarded_port", guest: 80, host: 8000 + p, auto_correct: true
+      node.vm.network "forwarded_port", guest: 9200, host: 19200 + p, auto_correct: true
       p += 1
     end
 
