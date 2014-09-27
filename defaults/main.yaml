@@ -34,7 +34,7 @@ elasticsearch_esconf_index_number_of_replicas:      ~   # 1
 
 #################################### Paths ####################################
 elasticsearch_esconf_path_conf:     ~   # /path/to/conf
-elasticsearch_esconf_path_data:     ~   /usr/share/elasticsearch/data   # /path/to/data1,/path/to/data2
+elasticsearch_esconf_path_data:     /usr/share/elasticsearch/data   # /path/to/data1,/path/to/data2
 elasticsearch_esconf_path_work:     ~   # /path/to/work
 elasticsearch_esconf_path_logs:     ~   # /path/to/logs
 elasticsearch_esconf_path_plugins:  ~   # /path/to/plugins
